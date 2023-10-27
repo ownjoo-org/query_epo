@@ -119,7 +119,7 @@ def main(
         print(f'{exc_auth}')
 
     def list_query_results():
-        return run(action='core.executeQuery', target=query_id)
+        return run(action='core.executeQuery', queryId=query_id)
 
     get_token()
     return list_query_results()
@@ -163,12 +163,19 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
 
+    proxies: Optional[dict] = None
+    if proxies:
+        try:
+            proxies: dict = json.loads(args.proxies)
+        except Exception as exc_json:
+            print(f'WARNING: failure parsing proxies: {exc_json}: proxies provided: {proxies}')
+
     results = main(
         domain=args.domain,
         username=args.username,
         password=args.password,
         query_id=args.query_id,
-        proxies=json.loads(args.proxies),
+        proxies=proxies,
     )
 
     if results:
